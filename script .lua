@@ -1,167 +1,200 @@
--- SCRIPT VER4 CDVN 💥
-local Players = game:GetService("Players")
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
 local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local UIS = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
 
--- GUI Setup
-local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
-ScreenGui.ResetOnSpawn = false
+-- ========== GUI SETUP ==========
+local gui = Instance.new("ScreenGui", CoreGui)
+gui.ResetOnSpawn = false
 
-local Frame = Instance.new("Frame", ScreenGui)
-Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-Frame.Position = UDim2.new(0.3, 0, 0.2, 0)
-Frame.Size = UDim2.new(0, 450, 0, 300)
-Frame.Active = true
-Frame.Draggable = true
+local openBtn = Instance.new("TextButton", gui)
+openBtn.Size = UDim2.new(0, 50, 0, 50)
+openBtn.Position = UDim2.new(0, 10, 0.5, -25)
+openBtn.Text = "🗿"
+openBtn.TextScaled = true
+openBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 
-local TopBar = Instance.new("TextLabel", Frame)
-TopBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-TopBar.Size = UDim2.new(1, 0, 0, 40)
-TopBar.Font = Enum.Font.GothamBold
-TopBar.Text = "SCRIPT VER4 CDVN 💥"
-TopBar.TextColor3 = Color3.fromRGB(255, 255, 255)
-TopBar.TextSize = 20
+local mainFrame = Instance.new("Frame", gui)
+mainFrame.Size = UDim2.new(0, 240, 0, 240)
+mainFrame.Position = UDim2.new(0, 70, 0.5, -120)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
+mainFrame.Visible = false
+mainFrame.Active = true
+mainFrame.Draggable = true
 
-local CloseButton = Instance.new("TextButton", Frame)
-CloseButton.Text = "X"
-CloseButton.Size = UDim2.new(0, 30, 0, 30)
-CloseButton.Position = UDim2.new(1, -35, 0, 5)
-CloseButton.Font = Enum.Font.Gotham
-CloseButton.TextSize = 18
-CloseButton.TextColor3 = Color3.fromRGB(255, 0, 0)
-CloseButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-CloseButton.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+local function addToggle(name, yPos, callback)
+	local btn = Instance.new("TextButton", mainFrame)
+	btn.Size = UDim2.new(0.9, 0, 0, 30)
+	btn.Position = UDim2.new(0.05, 0, 0, yPos)
+	btn.Text = "OFF - " .. name
+	btn.TextScaled = true
+	btn.BackgroundColor3 = Color3.fromRGB(80, 80, 120)
+	btn.TextColor3 = Color3.new(1,1,1)
 
--- Panel Setup
-local LeftPanel = Instance.new("Frame", Frame)
-LeftPanel.Position = UDim2.new(0, 0, 0, 40)
-LeftPanel.Size = UDim2.new(0, 150, 1, -40)
-LeftPanel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+	local state = false
+	btn.MouseButton1Click:Connect(function()
+		state = not state
+		btn.Text = (state and "ON  - " or "OFF - ") .. name
+		callback(state)
+	end)
+end
 
-local BossButton = Instance.new("TextButton", LeftPanel)
-BossButton.Size = UDim2.new(1, 0, 0, 50)
-BossButton.Text = "CHỨC NĂNG ĐÁNH BOSS"
-BossButton.Font = Enum.Font.Gotham
-BossButton.TextSize = 13
-BossButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-BossButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+local closeBtn = Instance.new("TextButton", mainFrame)
+closeBtn.Size = UDim2.new(0.2, 0, 0, 30)
+closeBtn.Position = UDim2.new(0.75, 0, 0, 5)
+closeBtn.Text = "❌"
+closeBtn.TextScaled = true
+closeBtn.BackgroundColor3 = Color3.fromRGB(100, 40, 40)
 
-local PvPButton = Instance.new("TextButton", LeftPanel)
-PvPButton.Position = UDim2.new(0, 0, 0, 60)
-PvPButton.Size = UDim2.new(1, 0, 0, 50)
-PvPButton.Text = "PVP CDVN"
-PvPButton.Font = Enum.Font.Gotham
-PvPButton.TextSize = 13
-PvPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-PvPButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-
-local RightPanel = Instance.new("Frame", Frame)
-RightPanel.Position = UDim2.new(0, 150, 0, 40)
-RightPanel.Size = UDim2.new(1, -150, 1, -40)
-RightPanel.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-
--- Right Buttons
-local FramBossBtn = Instance.new("TextButton", RightPanel)
-FramBossBtn.Size = UDim2.new(1, -20, 0, 40)
-FramBossBtn.Position = UDim2.new(0, 10, 0, 10)
-FramBossBtn.Text = "FRAM BOSS CDVN"
-FramBossBtn.Font = Enum.Font.GothamBold
-FramBossBtn.TextSize = 13
-FramBossBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-FramBossBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-FramBossBtn.Visible = false
-
-local AutoHit = Instance.new("TextButton", RightPanel)
-AutoHit.Size = UDim2.new(1, -20, 0, 40)
-AutoHit.Position = UDim2.new(0, 10, 0, 60)
-AutoHit.Text = "TỰ ĐỘNG ĐÁNH KHI CẦM VŨ KHÍ"
-AutoHit.Font = Enum.Font.Gotham
-AutoHit.TextSize = 12
-AutoHit.TextColor3 = Color3.fromRGB(255, 255, 255)
-AutoHit.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-AutoHit.Visible = false
-
-local SpeedHit = Instance.new("TextButton", RightPanel)
-SpeedHit.Size = UDim2.new(1, -20, 0, 40)
-SpeedHit.Position = UDim2.new(0, 10, 0, 110)
-SpeedHit.Text = "[ĐÁNH NHANH - SPEED TAY]"
-SpeedHit.Font = Enum.Font.Gotham
-SpeedHit.TextSize = 12
-SpeedHit.TextColor3 = Color3.fromRGB(255, 255, 255)
-SpeedHit.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-SpeedHit.Visible = false
-
-local HitboxBtn = Instance.new("TextButton", RightPanel)
-HitboxBtn.Size = UDim2.new(1, -20, 0, 40)
-HitboxBtn.Position = UDim2.new(0, 10, 0, 160)
-HitboxBtn.Text = "BẬT HITBOX"
-HitboxBtn.Font = Enum.Font.Gotham
-HitboxBtn.TextSize = 12
-HitboxBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-HitboxBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-HitboxBtn.Visible = false
-
--- Switch menu
-BossButton.MouseButton1Click:Connect(function()
-    FramBossBtn.Visible = true
-    AutoHit.Visible = false
-    SpeedHit.Visible = false
-    HitboxBtn.Visible = false
+-- Open/Close menu
+openBtn.MouseButton1Click:Connect(function()
+	mainFrame.Visible = not mainFrame.Visible
+end)
+closeBtn.MouseButton1Click:Connect(function()
+	mainFrame.Visible = false
 end)
 
-PvPButton.MouseButton1Click:Connect(function()
-    FramBossBtn.Visible = false
-    AutoHit.Visible = true
-    SpeedHit.Visible = true
-    HitboxBtn.Visible = true
+-- ========== SCRIPT 1: TĂNG TỐC ĐÁNH ==========
+local attackSpeedConnection
+addToggle("Tăng tốc đánh", 40, function(state)
+	if state then
+		attackSpeedConnection = RunService.Heartbeat:Connect(function()
+			local h = character:FindFirstChild("Humanoid")
+			if h then
+				for _, a in pairs(h:GetPlayingAnimationTracks()) do
+					pcall(function() a:AdjustSpeed(5) end)
+				end
+			end
+		end)
+	else
+		if attackSpeedConnection then attackSpeedConnection:Disconnect() end
+	end
 end)
 
--- Functional Scripts
-FramBossBtn.MouseButton1Click:Connect(function()
-    local speed = 30
-    while FramBossBtn.Text == "FRAM BOSS CDVN" do
-        task.wait()
-        for _, npc in pairs(workspace:GetDescendants()) do
-            if npc:FindFirstChild("Humanoid") and npc ~= Character then
-                Character:MoveTo(npc.Position + Vector3.new(3,0,0))
-            end
-        end
-    end
+-- ========== SCRIPT 2: TỰ ĐÁNH KHI CẦM VŨ KHÍ ==========
+local autoAttackLoop
+addToggle("Tự đánh khi cầm vũ khí", 80, function(state)
+	if state then
+		autoAttackLoop = true
+		task.spawn(function()
+			while autoAttackLoop do
+				local tool = character:FindFirstChildOfClass("Tool")
+				if tool then pcall(function() tool:Activate() end) end
+				wait(0.2)
+			end
+		end)
+	else
+		autoAttackLoop = false
+	end
 end)
 
-AutoHit.MouseButton1Click:Connect(function()
-    local tool = Character:FindFirstChildOfClass("Tool")
-    if tool then
-        local humanoid = Character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid:EquipTool(tool)
-            while AutoHit.Text == "TỰ ĐỘNG ĐÁNH KHI CẦM VŨ KHÍ" do
-                task.wait(0.3)
-                tool:Activate()
-            end
-        end
-    end
+-- ========== SCRIPT 3: XOAY QUANH ENEMY GẦN ==========
+local rotateLoop
+addToggle("Xoay quanh kẻ địch", 120, function(state)
+	if state then
+		rotateLoop = true
+		task.spawn(function()
+			local radius, speed = 21, 50
+			local angle = 0
+			local function getEnemy()
+				local closest, dist = nil, math.huge
+				local hrp = character:FindFirstChild("HumanoidRootPart")
+				if not hrp then return end
+				for _, obj in pairs(workspace:GetDescendants()) do
+					if obj:IsA("Model") and obj ~= character and obj:FindFirstChild("Humanoid") and obj:FindFirstChild("HumanoidRootPart") then
+						if obj.Humanoid.Health > 0 then
+							local d = (hrp.Position - obj.HumanoidRootPart.Position).Magnitude
+							if d < dist then
+								dist = d
+								closest = obj
+							end
+						end
+					end
+				end
+				return closest
+			end
+
+			while rotateLoop do
+				local hrp = character:FindFirstChild("HumanoidRootPart")
+				local enemy = getEnemy()
+				if hrp and enemy and enemy:FindFirstChild("HumanoidRootPart") then
+					angle += speed * RunService.Heartbeat:Wait()
+					local offset = Vector3.new(math.cos(angle)*radius, 0, math.sin(angle)*radius)
+					hrp.CFrame = CFrame.new(enemy.HumanoidRootPart.Position + offset, enemy.HumanoidRootPart.Position)
+				else wait(0.2) end
+			end
+		end)
+	else
+		rotateLoop = false
+	end
 end)
 
-SpeedHit.MouseButton1Click:Connect(function()
-    local humanoid = Character:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        humanoid.WalkSpeed = 100
-    end
-end)
+-- ========== SCRIPT 4: HITBOX 🗿 QUANH NGƯỜI ==========
+local hitboxActive = false
+local heads = {}
 
-HitboxBtn.MouseButton1Click:Connect(function()
-    for _, plr in pairs(Players:GetPlayers()) do
-        if plr ~= LocalPlayer and plr.Character then
-            for _, part in pairs(plr.Character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.Size = Vector3.new(5, 5, 5)
-                    part.Transparency = 0.6
-                    part.Material = Enum.Material.ForceField
-                end
-            end
-        end
-    end
+addToggle("Hitbox 🗿 quanh người", 160, function(state)
+	if state and #heads == 0 then
+		local count, radius = 12, 12
+		for i = 1, count do
+			local part = Instance.new("Part")
+			part.Anchored = true
+			part.CanCollide = false
+			part.Size = Vector3.new(1,1,1)
+			part.Transparency = 1
+			part.Parent = workspace
+
+			local gui = Instance.new("BillboardGui", part)
+			gui.Size = UDim2.new(2, 0, 2, 0)
+			gui.AlwaysOnTop = true
+
+			local lbl = Instance.new("TextLabel", gui)
+			lbl.Size = UDim2.new(1,0,1,0)
+			lbl.Text = "🗿"
+			lbl.BackgroundTransparency = 1
+			lbl.TextTransparency = 0.4
+			lbl.TextScaled = true
+			lbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+			table.insert(heads, part)
+		end
+
+		hitboxActive = true
+		task.spawn(function()
+			while hitboxActive do
+				local hrp = character:FindFirstChild("HumanoidRootPart")
+				if hrp then
+					for i, icon in pairs(heads) do
+						local angle = math.rad((i / #heads) * 360 + tick() * 50)
+						local offset = Vector3.new(math.cos(angle)*radius, 2, math.sin(angle)*radius)
+						icon.Position = hrp.Position + offset
+					end
+				end
+				RunService.Heartbeat:Wait()
+			end
+		end)
+
+		task.spawn(function()
+			while hitboxActive do
+				for _, obj in pairs(workspace:GetDescendants()) do
+					if obj:IsA("Model") and obj:FindFirstChild("Humanoid") and obj:FindFirstChild("HumanoidRootPart") and obj ~= character then
+						for _, icon in pairs(heads) do
+							if (icon.Position - obj.HumanoidRootPart.Position).Magnitude <= 3 then
+								obj.Humanoid:TakeDamage(5)
+							end
+						end
+					end
+				end
+				wait(0.2)
+			end
+		end)
+
+	else
+		hitboxActive = false
+		for _, h in pairs(heads) do
+			h:Destroy()
+		end
+		heads = {}
+	end
 end)
