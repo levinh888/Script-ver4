@@ -39,7 +39,7 @@ ToggleAutoAttack.Font = Enum.Font.Gotham
 ToggleAutoAttack.TextSize = 14
 
 local ToggleBossAttack = Instance.new("TextButton", Frame)
-ToggleBossAttack.Text = "Đánh Boss gần nhất"
+ToggleBossAttack.Text = "Quay vòng quanh Boss"
 ToggleBossAttack.Size = UDim2.new(1, -20, 0, 30)
 ToggleBossAttack.Position = UDim2.new(0, 10, 0, 80)
 ToggleBossAttack.BackgroundColor3 = Color3.fromRGB(70, 50, 80)
@@ -56,47 +56,46 @@ CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseBtn.Font = Enum.Font.GothamBold
 CloseBtn.TextSize = 16
 
+-- // Biến điều khiển
 local rotating = false
 local attacking = false
-local bossMode = false
+local bossTarget = nil
 
 -- // Tìm NPC gần nhất
-local function getNearestEnemy(radius)
+local function getNearestBoss(radius)
 	local closest, distance = nil, radius
 	for _, obj in pairs(workspace:GetDescendants()) do
 		if obj:FindFirstChild("Humanoid") and obj:FindFirstChild("HumanoidRootPart") and obj ~= Character then
-			local dist = (HumanoidRootPart.Position - obj.HumanoidRootPart.Position).Magnitude
-			if dist < distance then
-				closest = obj
-				distance = dist
+			if obj.Name:lower():find("boss") then -- Ưu tiên tên có chữ "boss"
+				local dist = (HumanoidRootPart.Position - obj.HumanoidRootPart.Position).Magnitude
+				if dist < distance then
+					closest = obj
+					distance = dist
+				end
 			end
 		end
 	end
 	return closest
 end
 
--- // Tự quay quanh NPC
+-- // Quay vòng quanh Boss
 RunService.RenderStepped:Connect(function()
-	if rotating then
-		local target = getNearestEnemy(23)
-		if target and target:FindFirstChild("HumanoidRootPart") then
-			local tHRP = target.HumanoidRootPart
-			local angle = tick() * 50
-			local radius = 23
-			local x = math.cos(angle) * radius
-			local z = math.sin(angle) * radius
-			HumanoidRootPart.CFrame = CFrame.new(tHRP.Position + Vector3.new(x, 0, z), tHRP.Position)
-		end
+	if rotating and bossTarget and bossTarget:FindFirstChild("HumanoidRootPart") then
+		local tHRP = bossTarget.HumanoidRootPart
+		local angle = tick() * math.rad(50) -- tốc độ quay
+		local radius = 23
+		local x = math.cos(angle) * radius
+		local z = math.sin(angle) * radius
+		HumanoidRootPart.CFrame = CFrame.new(tHRP.Position + Vector3.new(x, 0, z), tHRP.Position)
 	end
 end)
 
 -- // Tự đánh khi cầm vũ khí
 task.spawn(function()
-	while true do wait(0.3)
+	while true do wait(0.2)
 		if attacking then
 			local tool = LocalPlayer.Character:FindFirstChildOfClass("Tool")
 			if tool then
-				-- Giả lập click
 				pcall(function()
 					tool:Activate()
 				end)
@@ -105,14 +104,19 @@ task.spawn(function()
 	end
 end)
 
--- // Kích hoạt Boss Mode
+-- // Nút: Quay quanh Boss
 ToggleBossAttack.MouseButton1Click:Connect(function()
-	bossMode = not bossMode
-	ToggleBossAttack.Text = bossMode and "Đang đánh Boss..." or "Đánh Boss gần nhất"
-	rotating = bossMode
+	rotating = not rotating
+	if rotating then
+		bossTarget = getNearestBoss(100)
+		ToggleBossAttack.Text = "Đang quay quanh Boss..."
+	else
+		ToggleBossAttack.Text = "Quay vòng quanh Boss"
+		bossTarget = nil
+	end
 end)
 
--- // Tự đánh toggle
+-- // Nút: Tự đánh toggle
 ToggleAutoAttack.MouseButton1Click:Connect(function()
 	attacking = not attacking
 	ToggleAutoAttack.Text = attacking and "Đang tự đánh..." or "Tự đánh khi cầm vũ khí"
