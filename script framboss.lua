@@ -6,6 +6,12 @@ local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
 
+-- Tự cập nhật khi nhân vật respawn
+LocalPlayer.CharacterAdded:Connect(function(char)
+	Character = char
+	HumanoidRootPart = char:WaitForChild("HumanoidRootPart")
+end)
+
 -- // GUI
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 ScreenGui.Name = "AutoCombatUI"
@@ -39,7 +45,7 @@ ToggleAutoAttack.Font = Enum.Font.Gotham
 ToggleAutoAttack.TextSize = 14
 
 local ToggleBossAttack = Instance.new("TextButton", Frame)
-ToggleBossAttack.Text = "Quay vòng quanh Boss"
+ToggleBossAttack.Text = "Quay vòng quanh NPC gần"
 ToggleBossAttack.Size = UDim2.new(1, -20, 0, 30)
 ToggleBossAttack.Position = UDim2.new(0, 10, 0, 80)
 ToggleBossAttack.BackgroundColor3 = Color3.fromRGB(70, 50, 80)
@@ -60,33 +66,32 @@ CloseBtn.TextSize = 16
 local rotating = false
 local attacking = false
 local bossTarget = nil
+local angle = 0
 
--- // Tìm NPC gần nhất
-local function getNearestBoss(radius)
+-- // Tìm NPC gần nhất có Humanoid
+local function getNearestNPC(radius)
 	local closest, distance = nil, radius
 	for _, obj in pairs(workspace:GetDescendants()) do
 		if obj:FindFirstChild("Humanoid") and obj:FindFirstChild("HumanoidRootPart") and obj ~= Character then
-			if obj.Name:lower():find("boss") then -- Ưu tiên tên có chữ "boss"
-				local dist = (HumanoidRootPart.Position - obj.HumanoidRootPart.Position).Magnitude
-				if dist < distance then
-					closest = obj
-					distance = dist
-				end
+			local dist = (HumanoidRootPart.Position - obj.HumanoidRootPart.Position).Magnitude
+			if dist < distance then
+				closest = obj
+				distance = dist
 			end
 		end
 	end
 	return closest
 end
 
--- // Quay vòng quanh Boss
-RunService.RenderStepped:Connect(function()
+-- // Quay vòng quanh NPC (tốc độ quay cao)
+RunService.RenderStepped:Connect(function(dt)
 	if rotating and bossTarget and bossTarget:FindFirstChild("HumanoidRootPart") then
-		local tHRP = bossTarget.HumanoidRootPart
-		local angle = tick() * math.rad(50) -- tốc độ quay
-		local radius = 23
-		local x = math.cos(angle) * radius
-		local z = math.sin(angle) * radius
-		HumanoidRootPart.CFrame = CFrame.new(tHRP.Position + Vector3.new(x, 0, z), tHRP.Position)
+		angle = angle + dt * 710 -- ⚡ Tốc độ quay SIÊU NHANH
+		local radius = 20
+		local x = math.cos(math.rad(angle)) * radius
+		local z = math.sin(math.rad(angle)) * radius
+		local tHRP = bossTarget.HumanoidRootPart.Position
+		HumanoidRootPart.CFrame = CFrame.new(tHRP + Vector3.new(x, 0, z), tHRP)
 	end
 end)
 
@@ -104,14 +109,19 @@ task.spawn(function()
 	end
 end)
 
--- // Nút: Quay quanh Boss
+-- // Nút: Quay quanh NPC
 ToggleBossAttack.MouseButton1Click:Connect(function()
 	rotating = not rotating
 	if rotating then
-		bossTarget = getNearestBoss(100)
-		ToggleBossAttack.Text = "Đang quay quanh Boss..."
+		bossTarget = getNearestNPC(100)
+		if bossTarget then
+			ToggleBossAttack.Text = "Đang quay quanh NPC..."
+		else
+			ToggleBossAttack.Text = "Không tìm thấy NPC"
+			rotating = false
+		end
 	else
-		ToggleBossAttack.Text = "Quay vòng quanh Boss"
+		ToggleBossAttack.Text = "Quay vòng quanh NPC gần"
 		bossTarget = nil
 	end
 end)
