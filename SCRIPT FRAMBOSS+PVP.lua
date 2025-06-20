@@ -51,7 +51,7 @@ AddButton(Tab1, {
     end
 })
 
--- TAB 2: Boss Hunter 👹 (đã thay bằng bản bá đạo)
+-- TAB 2: Boss Hunter 👹
 local Tab2 = MakeTab({ Name = "Boss Hunter 👹" })
 AddButton(Tab2, {
     Name = "🔥 Bật Script OutFram Boss Bá Đạo",
@@ -64,26 +64,32 @@ AddButton(Tab2, {
 -- TAB 3: PvP
 local Tab3 = MakeTab({ Name = "PvP" })
 
+-- Đánh nhanh thật sự
 AddToggle(Tab3, {
-    Name = "⚡ Tăng tốc đánh",
+    Name = "💥 Đánh Nhanh Tay Thật",
     Callback = function(state)
+        _G.realFastAttack = state
         if state then
-            _G.atkSpeedConn = RunService.Heartbeat:Connect(function()
-                local h = Character:FindFirstChildOfClass("Humanoid")
-                if h then
-                    for _, a in pairs(h:GetPlayingAnimationTracks()) do
-                        pcall(function() a:AdjustSpeed(5) end)
+            task.spawn(function()
+                while _G.realFastAttack do
+                    local tool = Character:FindFirstChildOfClass("Tool")
+                    if tool then
+                        for i = 1, 5 do
+                            pcall(function()
+                                tool:Activate()
+                            end)
+                        end
                     end
+                    wait(0.05)
                 end
             end)
-        else
-            if _G.atkSpeedConn then _G.atkSpeedConn:Disconnect() end
         end
     end
 })
 
+-- Tự đánh khi cầm vũ khí
 AddToggle(Tab3, {
-    Name = "🤜 Tự đánh khi cầm vũ khí",
+    Name = "🡜 Tự đánh khi cầm vũ khí",
     Callback = function(state)
         _G.autoAtk = state
         if state then
@@ -98,26 +104,29 @@ AddToggle(Tab3, {
     end
 })
 
+-- Hitbox rực rỡ
 AddToggle(Tab3, {
-    Name = "🎯 Hitbox mở rộng",
+    Name = "🌟 Hitbox Rực Rỡ",
     Callback = function(state)
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= LocalPlayer then
                 local char = p.Character
                 if char then
-                    for _, part in ipairs({"Head", "HumanoidRootPart", "Torso"}) do
-                        local bodyPart = char:FindFirstChild(part)
-                        if bodyPart and bodyPart:IsA("BasePart") then
+                    for _, partName in ipairs({"Head", "HumanoidRootPart", "Torso"}) do
+                        local part = char:FindFirstChild(partName)
+                        if part and part:IsA("BasePart") then
                             if state then
-                                bodyPart.Size = Vector3.new(10, 10, 10)
-                                bodyPart.Transparency = 0.5
-                                bodyPart.Material = Enum.Material.Neon
-                                bodyPart.BrickColor = BrickColor.new("Really red")
+                                part.Size = Vector3.new(15, 15, 15)
+                                part.Material = Enum.Material.Neon
+                                part.Color = Color3.fromRGB(255, 0, 0)
+                                part.Transparency = 0.1
+                                part.Anchored = false
+                                part.CanCollide = false
                             else
-                                bodyPart.Size = Vector3.new(2, 2, 1)
-                                bodyPart.Transparency = 0
-                                bodyPart.Material = Enum.Material.Plastic
-                                bodyPart.BrickColor = BrickColor.new("Medium stone grey")
+                                part.Size = Vector3.new(2, 2, 1)
+                                part.Material = Enum.Material.Plastic
+                                part.Color = Color3.fromRGB(163, 162, 165)
+                                part.Transparency = 0
                             end
                         end
                     end
@@ -127,67 +136,85 @@ AddToggle(Tab3, {
     end
 })
 
+-- Hiển thị FPS chuẩn
 AddToggle(Tab3, {
-    Name = "📊 Hiển thị FPS",
+    Name = "📊 FPS Counter Chuẩn",
     Callback = function(state)
-        if not _G.fpsLabel then
-            _G.fpsLabel = Instance.new("TextLabel")
-            _G.fpsLabel.Size = UDim2.new(0, 120, 0, 30)
-            _G.fpsLabel.Position = UDim2.new(0, 10, 0, 10)
-            _G.fpsLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-            _G.fpsLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-            _G.fpsLabel.TextScaled = true
-            _G.fpsLabel.Font = Enum.Font.GothamBold
-            _G.fpsLabel.Text = ""
-            _G.fpsLabel.Parent = game.CoreGui
-        end
         if state then
-            _G.fpsLabel.Visible = true
-            _G.fpsRunning = true
+            if not _G.fpsLabel then
+                local fpsLabel = Instance.new("TextLabel")
+                fpsLabel.Size = UDim2.new(0, 120, 0, 30)
+                fpsLabel.Position = UDim2.new(0, 10, 0, 10)
+                fpsLabel.BackgroundColor3 = Color3.new(0, 0, 0)
+                fpsLabel.BackgroundTransparency = 0.3
+                fpsLabel.TextColor3 = Color3.new(0, 1, 0)
+                fpsLabel.Font = Enum.Font.GothamBold
+                fpsLabel.TextScaled = true
+                fpsLabel.Name = "FPSLabel"
+                fpsLabel.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+                _G.fpsLabel = fpsLabel
+            end
+            _G.runningFPS = true
             task.spawn(function()
-                local lastTime = tick()
-                local frameCount = 0
-                while _G.fpsRunning do
-                    frameCount += 1
-                    if tick() - lastTime >= 1 then
-                        _G.fpsLabel.Text = "FPS: " .. frameCount
-                        frameCount = 0
-                        lastTime = tick()
+                local last = tick()
+                local frames = 0
+                while _G.runningFPS do
+                    frames += 1
+                    if tick() - last >= 1 then
+                        _G.fpsLabel.Text = "FPS: " .. frames
+                        frames = 0
+                        last = tick()
                     end
                     RunService.RenderStepped:Wait()
                 end
             end)
         else
-            _G.fpsRunning = false
-            if _G.fpsLabel then _G.fpsLabel.Visible = false end
-        end
-    end
-})
-
-AddButton(Tab3, {
-    Name = "💻 Giảm đồ hoạ (30%)",
-    Description = "Xoá hiệu ứng + làm nhẹ game",
-    Callback = function()
-        local function clear(class)
-            for _, obj in ipairs(workspace:GetDescendants()) do
-                if obj:IsA(class) then pcall(function() obj:Destroy() end) end
+            _G.runningFPS = false
+            if _G.fpsLabel then
+                _G.fpsLabel.Text = ""
             end
         end
-        clear("ParticleEmitter")
-        clear("Trail")
-        clear("Smoke")
-        clear("Fire")
-        clear("Decal")
-        for _, v in pairs(Lighting:GetChildren()) do
-            if v:IsA("PostEffect") then v.Enabled = false end
-        end
-        Lighting.FogEnd = 100000
-        Lighting.Brightness = 0
-        Lighting.GlobalShadows = false
-        Lighting.OutdoorAmbient = Color3.fromRGB(127, 127, 127)
     end
 })
 
+-- Tối ưu hóa game mạnh mẽ
+AddButton(Tab3, {
+    Name = "💻 Tối Ưu FPS MAX",
+    Callback = function()
+        local function disableEffects()
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Fire") or obj:IsA("Smoke") then
+                    obj.Enabled = false
+                end
+            end
+        end
+
+        disableEffects()
+
+        for _, v in ipairs(Lighting:GetChildren()) do
+            if v:IsA("PostEffect") then
+                v.Enabled = false
+            end
+        end
+
+        Lighting.GlobalShadows = false
+        Lighting.FogEnd = 1e10
+        Lighting.Brightness = 0
+        Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+
+        local Terrain = workspace:FindFirstChildOfClass("Terrain")
+        if Terrain then
+            Terrain.WaterWaveSize = 0
+            Terrain.WaterWaveSpeed = 0
+            Terrain.WaterReflectance = 0
+            Terrain.WaterTransparency = 1
+        end
+
+        settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    end
+})
+
+-- PvP Pro Mode
 AddButton(Tab3, {
     Name = "🔥 PvP Pro Mode",
     Description = "Kích hoạt chế độ PvP nâng cao 👹",
