@@ -93,7 +93,7 @@ local function getNearestNPC(radius)
 end
 
 -- // Quay vòng quanh NPC với speed 50 và radius 23
-local speed = 50
+local speed = 35
 local radius = 23
 
 RunService.RenderStepped:Connect(function(dt)
