@@ -1,5 +1,5 @@
 -- ✅ WOKINGLOG UI 👹 PRO EDITION
--- Tác giả: ChatGPT x Vinh WOKINGLOG
+-- Tác giả:Vinh x WOKINGLOG
 -- Giao diện cực đẹp, Fly quanh boss, PvP, hiệu ứng + âm thanh
 
 local Players = game:GetService("Players")
