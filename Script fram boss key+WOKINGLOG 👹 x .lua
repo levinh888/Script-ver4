@@ -1,4 +1,3 @@
-
 local HhiKzlEu = game:GetService("Players")
 local DbLHKDlo = game:GetService("RunService")
 local IWOwfbgt = HhiKzlEu.LocalPlayer
@@ -138,32 +137,33 @@ UkXwqYpB = SatqARZZ.HumanoidRootPart.Position
 end
 end
 
-lwbzyReB += qrGPTfLI * EaGywFTu  
-	local x = math.cos(lwbzyReB) * WhgPVTNW  
-	local z = math.sin(lwbzyReB) * WhgPVTNW  
-	local gxFgdCVn = UkXwqYpB + Vector3.new(x, 0, z)  
+lwbzyReB += qrGPTfLI * EaGywFTu
+local x = math.cos(lwbzyReB) * WhgPVTNW
+local z = math.sin(lwbzyReB) * WhgPVTNW
+local gxFgdCVn = UkXwqYpB + Vector3.new(x, 0, z)
 
-	local current = WVZlhXIe.Position  
-	local vdoqhRvT = (gxFgdCVn - current).Unit  
-	local WNXMaDpn = vdoqhRvT * NcaHRAFY  
-	CszYSBgN.Velocity = Vector3.new(WNXMaDpn.X, 0, WNXMaDpn.Z)  
+local current = WVZlhXIe.Position
+local vdoqhRvT = (gxFgdCVn - current).Unit
+local WNXMaDpn = vdoqhRvT * NcaHRAFY
+CszYSBgN.Velocity = Vector3.new(WNXMaDpn.X, 0, WNXMaDpn.Z)
 
-	if SatqARZZ and SatqARZZ:FindFirstChild("HumanoidRootPart") then  
-		local FUimlQbJ = SatqARZZ.HumanoidRootPart.Position + Vector3.new(0, 1.5, 0)  
-		WVZlhXIe.CFrame = CFrame.new(WVZlhXIe.Position, FUimlQbJ)  
-		ZDrybyHO()  
-	end  
+if SatqARZZ and SatqARZZ:FindFirstChild("HumanoidRootPart") then
+local FUimlQbJ = SatqARZZ.HumanoidRootPart.Position + Vector3.new(0, 1.5, 0)
+WVZlhXIe.CFrame = CFrame.new(WVZlhXIe.Position, FUimlQbJ)
+ZDrybyHO()
+end
 
-	if SatqARZZ and SatqARZZ:FindFirstChild("Humanoid") then  
-		local zFdpYrWm = SatqARZZ.Humanoid.Health  
-		local mhcKDEyu = SatqARZZ.Humanoid.MaxHealth  
-		DHJwqWEq.Text = string.format("Máu Boss: %d / %d", zFdpYrWm, mhcKDEyu)  
-	else  
-		DHJwqWEq.Text = "Máu Boss: Đang tìm..."  
-	end  
-else  
-	CszYSBgN.Velocity = Vector3.zero  
-	DHJwqWEq.Text = "Máu Boss: Đang tìm..."  
+if SatqARZZ and SatqARZZ:FindFirstChild("Humanoid") then
+local zFdpYrWm = SatqARZZ.Humanoid.Health
+local mhcKDEyu = SatqARZZ.Humanoid.MaxHealth
+DHJwqWEq.Text = string.format("Máu Boss: %d / %d", zFdpYrWm, mhcKDEyu)
+else
+DHJwqWEq.Text = "Máu Boss: Đang tìm..."
+end
+
+else
+CszYSBgN.Velocity = Vector3.zero
+DHJwqWEq.Text = "Máu Boss: Đang tìm..."
 end
 
 end)
@@ -173,28 +173,28 @@ qrGPTfLI = tonumber(ZoOHJPPF.Text) or qrGPTfLI
 WhgPVTNW = tonumber(qmhTxBvo.Text) or WhgPVTNW
 ccFRfAJy = not ccFRfAJy
 
-if ccFRfAJy then  
-	SatqARZZ = pDyFAHzy()  
-	if SatqARZZ then  
-		UkXwqYpB = SatqARZZ.HumanoidRootPart.Position  
-		ibsaYIQc.Text = "⏸ Đang quay quanh Boss..."  
-		ibsaYIQc.BackgroundColor3 = Color3.fromRGB(120, 20, 20)  
-		CszYSBgN.Parent = WVZlhXIe  
-	else  
-		ibsaYIQc.Text = "❌ Không tìm thấy " .. eQSTrIOx  
-		ccFRfAJy = false  
-	end  
-else  
-	ibsaYIQc.Text = "▶️ Quay Vòng Tròn"  
-	ibsaYIQc.BackgroundColor3 = Color3.fromRGB(50, 70, 120)  
-	CszYSBgN.Velocity = Vector3.zero  
-	CszYSBgN.Parent = nil  
+if ccFRfAJy then
+SatqARZZ = pDyFAHzy()
+if SatqARZZ then
+UkXwqYpB = SatqARZZ.HumanoidRootPart.Position
+ibsaYIQc.Text = "⏸ Đang quay quanh Boss..."
+ibsaYIQc.BackgroundColor3 = Color3.fromRGB(120, 20, 20)
+CszYSBgN.Parent = WVZlhXIe
+else
+ibsaYIQc.Text = "❌ Không tìm thấy " .. eQSTrIOx
+ccFRfAJy = false
+end
+else
+ibsaYIQc.Text = "▶️ Quay Vòng Tròn"
+ibsaYIQc.BackgroundColor3 = Color3.fromRGB(50, 70, 120)
+CszYSBgN.Velocity = Vector3.zero
+CszYSBgN.Parent = nil
 end
 
 end)
 
 QkAwxdIV.MouseButton1Click:Connect(function()
-if VMOYvagN.Text == "fkszzz_108722" then
+if VMOYvagN.Text == "free188y" then
 FdeGtDaP:Destroy()
 ijrMwEvE.Parent = game.CoreGui
 ijrMwEvE.Enabled = true
